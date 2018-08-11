@@ -1,11 +1,31 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.db.PatientAddress;
+import models.db.dao.PatientAddressDaoImpl;
+import models.db.dao.interfaces.PatientAddressDao;
+import play.libs.Json;
+import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
+import software.amazon.awssdk.util.json.Jackson;
+import utils.AppUtil;
 
+import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
 
 public class AddressController extends Controller {
+
+    private final PatientAddressDaoImpl patientAddressDao;
+    private final HttpExecutionContext httpExecutionContext;
+
+    @Inject
+    public AddressController(PatientAddressDaoImpl patientAddressDao,
+                          HttpExecutionContext httpExecutionContext) {
+        this.patientAddressDao = patientAddressDao;
+        this.httpExecutionContext = httpExecutionContext;
+    }
 
     /**
      * Retrieves the List of addresses which are enabled corresponding to the patientId
@@ -51,8 +71,8 @@ public class AddressController extends Controller {
      * {
      *     "nickname": "John Doe",
      *     "province": "Manitoba",
-     *     "postal_code": "V0S0B1",
-     *     "street_address": "410, Hasbrouck, Gali number 37, Sector 4",
+     *     "postalCode": "V0S0B1",
+     *     "streetAddress": "410, Hasbrouck, Gali number 37, Sector 4",
      *     "city": "Toronto",
      * }
      * The patientId is present in the header (presented in the header as patient_id)
@@ -64,7 +84,17 @@ public class AddressController extends Controller {
      * @see utils.AppUtil#getBadRequestObject(String) if unsuccessfull
      */
     public CompletionStage<Result> addPatientAddress() {
-        return null;
+        long patient_id = Long.parseLong(request().getQueryString("patient_id"));
+//        String jsonAddress = Jackson.toJsonString(request().body().asFormUrlEncoded());
+//        final PatientAddress newPatientAddress = Jackson.fromJsonString(jsonAddress, PatientAddress.class);
+        JsonNode jsonAddress = request().body().asJson();
+        PatientAddress newPatientAddress = Json.fromJson(jsonAddress, PatientAddress.class);
+        patientAddressDao.addPatientAddress(patient_id, newPatientAddress);
+
+        // Run insert db operation, then redirect
+        return patientAddressDao.addPatientAddress(patient_id, newPatientAddress).thenApplyAsync(data -> {
+            return ok(AppUtil.getSuccessObject("Address saved for patient_id: " + String.valueOf(patient_id)));
+        }, httpExecutionContext.current());
     }
 
 
@@ -79,6 +109,7 @@ public class AddressController extends Controller {
      * @see utils.AppUtil#getBadRequestObject(String) if unsuccessfull
      */
     public CompletionStage<Result> deletePatientAddress(long addressId) {
+
         return null;
     }
 

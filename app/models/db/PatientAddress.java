@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "patient_address")
-@Index(columnNames = "patient_id, enabled")
+@Index(name = "ix_patient_address_patient_id_enabled", columnNames = "patient_id, enabled")
 public class PatientAddress extends BaseModel implements Serializable {
 
     @Column(name = "patient_id")
@@ -32,12 +32,12 @@ public class PatientAddress extends BaseModel implements Serializable {
     @Size(min = 1, max = 87)
     private String province;
 
-    @Column(name = "postal_code")
+    @Column(name = "postalCode")
     @NotNull(message = "Postal Code  is required")
     @Size(min = 6, max = 40, message = "Incorrect Province length")
     private String postalCode;
 
-    @Column(name = "street_address")
+    @Column(name = "streetAddress")
     @NotNull(message = "Street Address is required")
     @Size(min = 1, max = 255, message = "Street address length is incorrect")
     private String streetAddress;
@@ -52,4 +52,59 @@ public class PatientAddress extends BaseModel implements Serializable {
     @Size(min = 2, max = 4)
     private String country = "ca";
 
+    public long getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(long patientId) {
+        this.patientId = patientId;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 }
