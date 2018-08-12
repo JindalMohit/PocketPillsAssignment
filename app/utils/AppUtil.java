@@ -11,11 +11,6 @@ public class AppUtil {
     private static final String STR_SUCCESS = "success";
     private static final String STR_MESSAGE = "message";
 
-    @Inject
-    public AppUtil() {
-
-    }
-
     /**
      * Base json response object for failed response
      * @param message message for failure

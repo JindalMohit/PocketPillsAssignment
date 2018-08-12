@@ -1,22 +1,16 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.db.PatientAddress;
 import models.db.dao.PatientAddressDaoImpl;
-import models.db.dao.interfaces.PatientAddressDao;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Result;
-import software.amazon.awssdk.util.json.Jackson;
 import utils.AppUtil;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.concurrent.CompletionStage;
-
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class AddressController extends Controller {
 
