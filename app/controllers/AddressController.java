@@ -13,7 +13,10 @@ import software.amazon.awssdk.util.json.Jackson;
 import utils.AppUtil;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class AddressController extends Controller {
 
@@ -62,7 +65,15 @@ public class AddressController extends Controller {
      * @see utils.AppUtil#getBadRequestObject(String) if unsuccessful
      */
     public CompletionStage<Result> getPatientAddress() {
-        return null;
+        long patient_id = Long.parseLong(request().getQueryString("patient_id"));
+        return patientAddressDao.getPatientAddress(patient_id).thenApplyAsync(addressList -> {
+            return ok(AppUtil.getSuccessObject(addressList.toString()));
+        }, httpExecutionContext.current());
+
+//        return supplyAsync(() -> {
+//            List<PatientAddress> patientAddresses = PatientAddress.find.all();
+//            return ok(AppUtil.getSuccessObject(patientAddresses.toString()));
+//        }, httpExecutionContext.current());
     }
 
     /**
@@ -85,15 +96,13 @@ public class AddressController extends Controller {
      */
     public CompletionStage<Result> addPatientAddress() {
         long patient_id = Long.parseLong(request().getQueryString("patient_id"));
-//        String jsonAddress = Jackson.toJsonString(request().body().asFormUrlEncoded());
-//        final PatientAddress newPatientAddress = Jackson.fromJsonString(jsonAddress, PatientAddress.class);
         JsonNode jsonAddress = request().body().asJson();
         PatientAddress newPatientAddress = Json.fromJson(jsonAddress, PatientAddress.class);
         patientAddressDao.addPatientAddress(patient_id, newPatientAddress);
 
         // Run insert db operation, then redirect
         return patientAddressDao.addPatientAddress(patient_id, newPatientAddress).thenApplyAsync(data -> {
-            return ok(AppUtil.getSuccessObject("Address saved for patient_id: " + String.valueOf(patient_id)));
+            return ok(AppUtil.getSuccessObject("Address saved at id: " + data.toString()));
         }, httpExecutionContext.current());
     }
 
@@ -109,8 +118,10 @@ public class AddressController extends Controller {
      * @see utils.AppUtil#getBadRequestObject(String) if unsuccessfull
      */
     public CompletionStage<Result> deletePatientAddress(long addressId) {
-
-        return null;
+        return patientAddressDao.deletePatientAddress(addressId).thenApplyAsync(data -> {
+            if(data) return ok(AppUtil.getSuccessObject("entry deleted at id: " + addressId));
+            return badRequest(AppUtil.getBadRequestObject("unable to delete at id: " + addressId));
+        }, httpExecutionContext.current());
     }
 
 

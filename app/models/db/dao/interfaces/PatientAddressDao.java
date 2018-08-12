@@ -19,11 +19,10 @@ public interface PatientAddressDao {
     /**
      * Deletes are all soft-deletes. Sets {@see models.db.BaseModel#enabled} as false
      *
-     * @param patientId patient identifier
      * @param addressId {@see PatientAddress} identifier
      * @return CompletableFuture of type True if successfull, false otherwise
      */
-    CompletionStage<Boolean> deletePatientAddress(long patientId, long addressId);
+    CompletionStage<Boolean> deletePatientAddress(long addressId);
 
 
     /**

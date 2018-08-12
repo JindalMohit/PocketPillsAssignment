@@ -1,6 +1,7 @@
 package models.db;
 
 
+import io.ebean.Finder;
 import io.ebean.annotation.Index;
 
 import javax.persistence.Column;
@@ -51,6 +52,8 @@ public class PatientAddress extends BaseModel implements Serializable {
     @Column(name = "country")
     @Size(min = 2, max = 4)
     private String country = "ca";
+
+    public static final Finder<Long, PatientAddress> find = new Finder<>(PatientAddress.class);
 
     public long getPatientId() {
         return patientId;
