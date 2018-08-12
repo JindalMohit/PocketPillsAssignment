@@ -31,13 +31,11 @@ public class PatientAddressDaoImpl implements PatientAddressDao {
 
     @Override
     public CompletionStage<List<PatientAddress>> getPatientAddress(long patientId) {
-//        return PatientAddress.find.all();
         return supplyAsync(() ->
                 ebeanServer.find(PatientAddress.class)
                         .select("nickname, province, postalCode, streetAddress, city")
                         .where()
                         .eq("patient_id", patientId)
-                        .eq("enabled", true)
                         .findList(), executionContext);
     }
 
@@ -48,7 +46,7 @@ public class PatientAddressDaoImpl implements PatientAddressDao {
             try {
                 PatientAddress savedAddress = ebeanServer.find(PatientAddress.class).setId(addressId).findOne();
                 if (savedAddress != null) {
-                    savedAddress.setEnabled(false);
+                    savedAddress.setEnabled(true);
 
                     savedAddress.update();
                     txn.commit();
@@ -69,7 +67,7 @@ public class PatientAddressDaoImpl implements PatientAddressDao {
 //        configStartup.onStart(config);
 //        EbeanServer ebeanServer = EbeanServerFactory.create(config);
         address.setPatientId(patientId);
-        address.setEnabled(true);
+        address.setEnabled(false);
         return supplyAsync(() -> {
             ebeanServer.insert(address);
             return address.getId();

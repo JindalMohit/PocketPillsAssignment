@@ -53,8 +53,6 @@ public class PatientAddress extends BaseModel implements Serializable {
     @Size(min = 2, max = 4)
     private String country = "ca";
 
-    public static final Finder<Long, PatientAddress> find = new Finder<>(PatientAddress.class);
-
     public long getPatientId() {
         return patientId;
     }

@@ -31,12 +31,12 @@ public class AddressController extends Controller {
     }
 
     /**
-     * Retrieves the List of addresses which are enabled corresponding to the patientId
+     * Retrieves the List of addresses which are enabled false corresponding to the patientId
      * (presented in the header as patient_id)
      * present in the header
      *
      * We need to return only those addresses which have enabled flag set
-     * as True {@see models.db.BaseModel#enabled}
+     * as false {@see models.db.BaseModel#enabled}
      *
      *
      * The resultant JSON would look like:
@@ -67,13 +67,8 @@ public class AddressController extends Controller {
     public CompletionStage<Result> getPatientAddress() {
         long patient_id = Long.parseLong(request().getQueryString("patient_id"));
         return patientAddressDao.getPatientAddress(patient_id).thenApplyAsync(addressList -> {
-            return ok(AppUtil.getSuccessObject(addressList.toString()));
+            return ok(AppUtil.getSuccessObject(Json.toJson(addressList).toString()));
         }, httpExecutionContext.current());
-
-//        return supplyAsync(() -> {
-//            List<PatientAddress> patientAddresses = PatientAddress.find.all();
-//            return ok(AppUtil.getSuccessObject(patientAddresses.toString()));
-//        }, httpExecutionContext.current());
     }
 
     /**
@@ -110,7 +105,7 @@ public class AddressController extends Controller {
     /**
      * @see models.db.PatientAddress entry is deleted corresponding to the {@code addressId}
      * For deleting a particular address, we just set the
-     * enabled flag as false {@see models.db.BaseModel#enabled}
+     * enabled flag as true {@see models.db.BaseModel#enabled}
      *
      * @param addressId which we need to delete
      * @return json denoting success or failure encapsulated in
